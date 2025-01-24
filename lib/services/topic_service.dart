@@ -49,6 +49,145 @@ Qraf nəzəriyyəsi riyaziyyatın təpələr və tillər haqqında olan sahəsid
             difficulty: 'Orta',
             source: 'Codeforces',
             url: 'https://codeforces.com/problemset/problem/20/C',
+            solutionCodes: {
+              'C++': '''#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+const ll INF = 1e18;
+vector<vector<pair<int, ll>>> adj;
+vector<ll> dist;
+vector<int> parent;
+
+void dijkstra(int start) {
+    int n = adj.size();
+    dist.assign(n, INF);
+    parent.assign(n, -1);
+    dist[start] = 0;
+    
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<>> pq;
+    pq.push({0, start});
+    
+    while (!pq.empty()) {
+        int v = pq.top().second;
+        ll d = pq.top().first;
+        pq.pop();
+        
+        if (d > dist[v]) continue;
+        
+        for (auto [u, w] : adj[v]) {
+            if (dist[v] + w < dist[u]) {
+                dist[u] = dist[v] + w;
+                parent[u] = v;
+                pq.push({dist[u], u});
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    adj.resize(n);
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        ll w;
+        cin >> a >> b >> w;
+        a--; b--;
+        adj[a].push_back({b, w});
+        adj[b].push_back({a, w});
+    }
+    
+    dijkstra(0);
+    
+    if (dist[n-1] == INF) {
+        cout << -1 << endl;
+        return 0;
+    }
+    
+    vector<int> path;
+    for (int v = n-1; v != -1; v = parent[v]) {
+        path.push_back(v);
+    }
+    reverse(path.begin(), path.end());
+    
+    for (int v : path) {
+        cout << v+1 << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}''',
+              'Python': '''from heapq import heappush, heappop
+from collections import defaultdict
+
+def dijkstra(adj, n, start):
+    dist = [float('inf')] * n
+    parent = [-1] * n
+    dist[start] = 0
+    
+    pq = [(0, start)]
+    while pq:
+        d, v = heappop(pq)
+        
+        if d > dist[v]:
+            continue
+            
+        for u, w in adj[v]:
+            if dist[v] + w < dist[u]:
+                dist[u] = dist[v] + w
+                parent[u] = v
+                heappush(pq, (dist[u], u))
+                
+    return dist, parent
+
+def main():
+    n, m = map(int, input().split())
+    adj = defaultdict(list)
+    
+    for _ in range(m):
+        a, b, w = map(int, input().split())
+        a -= 1
+        b -= 1
+        adj[a].append((b, w))
+        adj[b].append((a, w))
+        
+    dist, parent = dijkstra(adj, n, 0)
+    
+    if dist[n-1] == float('inf'):
+        print(-1)
+        return
+        
+    path = []
+    v = n-1
+    while v != -1:
+        path.append(v)
+        v = parent[v]
+    
+    print(' '.join(str(v+1) for v in reversed(path)))
+
+if __name__ == '__main__':
+    main()''',
+            },
+            explanation: '''# Dijkstra Alqoritmi ilə Həll
+
+Bu məsələni həll etmək üçün Dijkstra alqoritmindən istifadə edirik. Alqoritm aşağıdakı addımlardan ibarətdir:
+
+1. Hər təpə üçün məsafəni sonsuzluqla inisializasiya edirik
+2. Başlanğıc təpənin məsafəsini 0 edirik
+3. Priority Queue istifadə edərək ən kiçik məsafəli təpəni seçirik
+4. Seçilmiş təpədən gedə biləcəyimiz bütün təpələri yoxlayırıq
+5. Əgər yeni məsafə köhnədən kiçikdirsə, məsafəni yeniləyirik
+
+Yolun özünü tapmaq üçün:
+1. Parent massivi saxlayırıq
+2. Hər məsafə yeniləməsində parent-i də yeniləyirik
+3. Sonda son təpədən başlayaraq parent massivi ilə geriyə gedirik
+
+Alqoritmin mürəkkəbliyi: O((N+M)logN)
+- N: təpələrin sayı
+- M: tillərin sayı''',
           ),
           Problem(
             id: '2',

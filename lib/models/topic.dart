@@ -33,6 +33,8 @@ class Problem {
   final String difficulty;
   final String source;
   final String url;
+  final Map<String, String> solutionCodes;
+  final String explanation;
 
   Problem({
     required this.id,
@@ -41,6 +43,8 @@ class Problem {
     required this.difficulty,
     required this.source,
     required this.url,
+    this.solutionCodes = const {},
+    this.explanation = '',
   });
 
   factory Problem.fromJson(Map<String, dynamic> json) {
@@ -51,6 +55,8 @@ class Problem {
       difficulty: json['difficulty'] as String,
       source: json['source'] as String,
       url: json['url'] as String,
+      solutionCodes: Map<String, String>.from(json['solutionCodes'] ?? {}),
+      explanation: json['explanation'] as String? ?? '',
     );
   }
 } 

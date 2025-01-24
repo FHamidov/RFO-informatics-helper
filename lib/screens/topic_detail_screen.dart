@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/topic.dart';
+import 'problem_detail_screen.dart';
 
 class TopicDetailScreen extends StatelessWidget {
   final Topic topic;
@@ -103,7 +104,12 @@ class TopicDetailScreen extends StatelessWidget {
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.launch),
-                      onPressed: () => _launchProblemUrl(problem.url),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProblemDetailScreen(problem: problem),
+                        ),
+                      ),
                     ),
                   ),
                 );
